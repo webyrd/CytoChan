@@ -12,11 +12,26 @@
  example-genes
  genes-with-evidence-of-benignness
  genes-with-evidence-of-dangerousness&benignness
+ cytogenomic-info
  )
 
 (require
   "example-genes.rkt")
 
+
+(define write-tsv
+  (lambda (db file-name)
+    (let ((op (open-output-file file-name #:exists 'replace)))
+      (for-each
+       (lambda (e)
+         (for-each
+          (lambda (v)           
+            (write v op)
+            (write-char #\tab op))
+          e)
+         (newline op))
+       db)
+      (close-output-port op))))
 
 (define clinVar
   (read (open-input-file "./variant_summary_sexpr.rkt")))
@@ -76,23 +91,6 @@
              (>= (string->number end) 68330127))
         )))
    chrom9cngClinVar))
-
-(define write-tsv
-  (lambda (db)
-    (let ((op (open-output-file "./report.tsv" #:exists 'replace)))
-      (for-each
-       (lambda (e)
-         (for-each
-          (lambda (v)           
-            (write v op)
-            (write-char #\tab op))
-          e)
-         (newline op))
-       db)
-      (close-output-port op))))
-
-(write-tsv chrom9InRangecngClinVar)
-
 
 (define dangerousChrom9InRangecngClinVar (filter (lambda (e)
                                                    (or 
@@ -160,8 +158,22 @@
    example-genes))
 
 
-(map (lambda (ls) (list (car ls)
-                        (if (list? (list-ref ls 3)) (length (list-ref ls 3)) (list-ref ls 3))
-                        (if (list? (list-ref ls 4)) (length (list-ref ls 4)) (list-ref ls 4))
-                        ))
-     genes-with-evidence-of-dangerousness&benignness)
+(define cytogenomic-info
+  (map (lambda (ls)
+         (let ((gene-name (car ls))
+               (omim-number (list-ref ls 3))
+               (omim-disorder-1 (list-ref ls 4))
+               (omim-disorder-2 (list-ref ls 5))
+               (omim-disorder-3 (list-ref ls 6))
+               (path-list (list-ref ls 7))
+               (benign-list (list-ref ls 8)))
+           (list gene-name
+                 (if (list? path-list) (length path-list) path-list)
+                 (if (list? benign-list) (length benign-list) benign-list)
+                 omim-number
+                 omim-disorder-1
+                 omim-disorder-2
+                 omim-disorder-3)))
+       genes-with-evidence-of-dangerousness&benignness))
+
+(write-tsv cytogenomic-info "./cytogenomic-analysis.tsv")
