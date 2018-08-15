@@ -195,9 +195,10 @@
        genes-with-evidence-of-dangerousness&benignness))
 
 
+;;; Why are we getting duplicate entries???
 (display "duplicate entries in cytogenomic-info:")
 (newline)
 (pretty-print (dups cytogenomic-info))
 
 
-(write-tsv cytogenomic-info "./cytogenomic-analysis.tsv")
+(write-tsv (rem-dups cytogenomic-info) "./cytogenomic-analysis.tsv")
