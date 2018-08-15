@@ -33,6 +33,24 @@
        db)
       (close-output-port op))))
 
+
+;; remove duplicates from a list
+(define rem-dups
+  (lambda (ls)
+    (cond
+      [(null? ls) '()]
+      [(member (car ls) (cdr ls)) (rem-dups (cdr ls))]
+      [else (cons (car ls) (rem-dups (cdr ls)))])))
+
+;; return duplicates from a list
+(define dups
+  (lambda (ls)
+    (cond
+      [(null? ls) '()]
+      [(member (car ls) (cdr ls)) (cons (car ls) (dups (cdr ls)))]
+      [else (dups (cdr ls))])))
+
+
 (define clinVar
   (read (open-input-file "./variant_summary_sexpr.rkt")))
 
@@ -175,5 +193,11 @@
                  omim-disorder-2
                  omim-disorder-3)))
        genes-with-evidence-of-dangerousness&benignness))
+
+
+(display "duplicate entries in cytogenomic-info:")
+(newline)
+(pretty-print (dups cytogenomic-info))
+
 
 (write-tsv cytogenomic-info "./cytogenomic-analysis.tsv")
