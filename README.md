@@ -2,6 +2,8 @@
 Cytogenetic Genomic Analysis in Racket
 
 
+*** FOR RESEARCH PURPOSES ONLY ***
+
 Mei-Jan Chen, Jacob Cordover, and William E. Byrd
 
 Hugh Kaul Precision Medicine Institute, University of Alabama at Birmingham
